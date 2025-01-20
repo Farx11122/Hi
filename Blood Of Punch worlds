@@ -3,4 +3,6 @@ local gameId = game.PlaceId
 local 1GameId = 137535317402998
 if gameId == popItGameId then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Farx11122/Dupess/refs/heads/main/Punch_Of_Blood"))()
-elseif gameId == petsGameId then
+elseif gameId == 2GameId then
+
+print("hi")
