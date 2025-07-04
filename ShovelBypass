@@ -1,0 +1,49 @@
+
+local pl = game:GetService("Players").LocalPlayer
+local cam = workspace.CurrentCamera
+local uis = game:GetService("UserInputService")
+local rs = game:GetService("ReplicatedStorage")
+local cs = game:GetService("CollectionService")
+
+local del = rs:WaitForChild("GameEvents"):WaitForChild("DeleteObject")
+local rem = rs:WaitForChild("GameEvents"):WaitForChild("Remove_Item")
+local getFarm = require(rs.Modules.GetFarm)
+
+local function isSpr(name)
+	return name:lower():find("sprinkler")
+end
+
+local function ray(pos)
+	local r = cam:ViewportPointToRay(pos.X, pos.Y)
+	local p = RaycastParams.new()
+	p.FilterType = Enum.RaycastFilterType.Exclude
+	p.FilterDescendantsInstances = {cs:GetTagged("ShovelIgnore")}
+	return workspace:Raycast(r.Origin, r.Direction * 500, p)
+end
+
+local function delSpr(pos)
+	local hit = ray(pos)
+	if not hit then return end
+
+	local m = hit.Instance:FindFirstAncestorWhichIsA("Model")
+	if not m or not isSpr(m.Name) then return end
+
+	local f = getFarm(pl)
+	if not f or not hit.Instance:IsDescendantOf(f) then return end
+
+	if cs:HasTag(m, "PlaceableObject") then
+		del:FireServer(m)
+	else
+		rem:FireServer(hit.Instance)
+	end
+end
+
+if uis.TouchEnabled then
+	uis.TouchTapInWorld:Connect(delSpr)
+else
+	uis.InputBegan:Connect(function(i, g)
+		if not g and i.UserInputType == Enum.UserInputType.MouseButton1 then
+			delSpr(uis:GetMouseLocation())
+		end
+	end)
+end
