@@ -2,7 +2,8 @@
 
 game.StarterGui:SetCore("SendNotification",{
     Title = "farxss loves u",
-    Text = ".Removed for now!",
+    Text = "dm farxss for new",
     Duration = 30
 })
+
 
